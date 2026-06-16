@@ -20,9 +20,11 @@ import os
 import shutil
 from pathlib import Path
 
-os.environ["WANDB_DISABLED"] = "true"   # prevent WandB crashing on project names with '/'
+os.environ["WANDB_MODE"] = "disabled"   # prevent WandB crashing on project names with '/'
 
 from ultralytics import YOLO
+from ultralytics.utils import settings as _ult_settings
+_ult_settings.update({"wandb": False})
 
 from src.utils.config import load_config
 from src.utils.manifest import record_run
