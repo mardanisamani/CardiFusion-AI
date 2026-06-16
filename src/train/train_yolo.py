@@ -16,8 +16,11 @@ turns mosaic off for the last N epochs as the brief requests.
 from __future__ import annotations
 
 import argparse
+import os
 import shutil
 from pathlib import Path
+
+os.environ["WANDB_DISABLED"] = "true"   # prevent WandB crashing on project names with '/'
 
 from ultralytics import YOLO
 
