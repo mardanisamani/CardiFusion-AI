@@ -23,8 +23,16 @@ from pathlib import Path
 os.environ["WANDB_MODE"] = "disabled"   # prevent WandB crashing on project names with '/'
 
 from ultralytics import YOLO
-from ultralytics.utils import settings as _ult_settings
-_ult_settings.update({"wandb": False})
+
+# Neutralise the WandB ultralytics callback so it never calls wandb.init()
+try:
+    import ultralytics.utils.callbacks.wb as _wb
+    _noop = lambda *a, **k: None
+    _wb.on_pretrain_routine_start = _noop
+    _wb.on_fit_epoch_end = _noop
+    _wb.on_train_end = _noop
+except Exception:
+    pass
 
 from src.utils.config import load_config
 from src.utils.manifest import record_run
