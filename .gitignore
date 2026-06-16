@@ -1,0 +1,35 @@
+# Data (large; download separately per README)
+data/raw/
+data/arcade/
+data/syntax/
+data/stenosis/
+data/yolo/
+*.zip
+
+# Model artifacts that are large / regenerated. The FOUR submission weights in
+# weights/ are tracked for the submission zip; everything else is ignored.
+runs/
+*.pth
+wandb/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+cardi_env/
+.ipynb_checkpoints/
+
+# Submission bundle
+submission.zip
+
+# Trained weights (large binaries)
+weights/*.pt
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
+
+# Report build artifacts (report.pdf is tracked; intermediate is not)
+report/_build/

@@ -1,0 +1,20 @@
+# Phase 6 — ensemble fine-tune (Stage 3). Reuses the improved-YOLO recipe on the
+# vessel-prior composite input. Writes back to the SAME yolov8_improved.pt slot
+# (no 5th weight file). AI-assisted config.
+name: yolov8_improved          # reuse the improved slot, per the brief
+seed: 1337
+model: weights/yolov8_improved.pt   # warm-start from improved detector
+data_yaml: data/yolo_ensemble/data.yaml   # built by build_vessel_channel.py
+epochs: 60                     # fine-tune, fewer epochs
+imgsz: 640
+batch: 16
+optimizer: SGD
+lr0: 0.005
+lrf: 0.01
+patience: 20
+close_mosaic: 10
+mosaic: 0.5
+copy_paste: 0.3
+scale: 0.3
+project: runs/detect
+weights_path: weights/yolov8_improved.pt

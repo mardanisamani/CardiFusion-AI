@@ -1,0 +1,40 @@
+{
+  "project": "ARCADE interview \u2014 coronary vessel segmentation + stenosis detection",
+  "description": "Run manifest. Populated by src/utils/manifest.py at the start of every train/eval entrypoint so each result is traceable to seeds, library versions, and hardware.",
+  "global_seed": 1337,
+  "deterministic": true,
+  "expected_versions": {
+    "python": "3.10.x",
+    "torch": "2.2.2",
+    "torchvision": "0.17.2",
+    "segmentation-models-pytorch": "0.3.3",
+    "ultralytics": "8.1.34",
+    "cuda": "11.8"
+  },
+  "models": {
+    "unet_baseline.pt": "Phase 2 \u2014 smp.Unet resnet34, Dice+CE",
+    "unet_weighted_edge.pt": "Phase 3 \u2014 same recipe + weighted-edge loss",
+    "yolov8_baseline.pt": "Phase 4 \u2014 yolov8m, stenosis, Ultralytics defaults",
+    "yolov8_improved.pt": "Phase 5/6 \u2014 one justified change; also reused for the ensemble (no 5th file)"
+  },
+  "runtime": {
+    "git_commit": null,
+    "host": "Saras-MacBook-Pro.local",
+    "platform": "macOS-15.4.1-arm64-arm-64bit",
+    "python": "3.11.15",
+    "gpu": null,
+    "versions": {
+      "torch": "2.2.2",
+      "torchvision": "0.17.2",
+      "segmentation-models-pytorch": "0.3.3",
+      "ultralytics": "8.1.34",
+      "pycocotools": "2.0.7",
+      "numpy": "1.26.4",
+      "opencv-python-headless": "4.9.0.80",
+      "scikit-image": "0.22.0"
+    },
+    "started_utc": "2026-06-16T17:08:32.126139Z",
+    "experiment": "unet_baseline",
+    "config": "configs/unet_baseline.yaml"
+  }
+}

@@ -1,0 +1,16 @@
+# Phase 4 — baseline YOLOv8 (Stage 2.1). Ultralytics defaults; mosaic off the
+# last 10 epochs. AI-assisted config.
+name: yolov8_baseline
+seed: 1337
+model: yolov8m.pt
+data_yaml: data/yolo/data.yaml   # built by coco_to_yolo.py (NO enhancement)
+epochs: 100
+imgsz: 640
+batch: 16
+optimizer: SGD
+lr0: 0.01
+lrf: 0.01
+patience: 30
+close_mosaic: 10                 # turn mosaic off for the final 10 epochs
+project: runs/detect
+weights_path: weights/yolov8_baseline.pt

@@ -1,0 +1,39 @@
+# Phase 5 — improved YOLOv8 (Stage 2.2). ONE justified change vs baseline,
+# selected by the Phase-4 failure type. AI-assisted config.
+#
+# Two prepared branches — keep the one matching your baseline failure, and leave
+# EVERYTHING ELSE identical to yolo_baseline.yaml for a controlled comparison:
+#
+#  (A) missed small/subtle lesions  -> domain-specific augmentation (this file).
+#      Rationale: stenoses are tiny; default mosaic/scale shrink them further.
+#      We soften mosaic, enable copy_paste to multiply rare positives, and add
+#      mild affine + photometric jitter to expose the detector to more small,
+#      varied lesions without distorting clinical appearance.
+#
+#  (B) catheter/artifact false positives -> advanced preprocessing instead:
+#      rebuild data/yolo with `coco_to_yolo.py --enhance` (top-hat+CLAHE, and
+#      optionally a Frangi vesselness channel) and point data_yaml at it; keep
+#      augmentation at baseline values. See README "Stage 2 improvement".
+#
+name: yolov8_improved
+seed: 1337
+model: yolov8m.pt
+data_yaml: data/yolo/data.yaml      # branch B: swap to data/yolo_enhanced/data.yaml
+epochs: 100
+imgsz: 640
+batch: 16
+optimizer: SGD
+lr0: 0.01
+lrf: 0.01
+patience: 30
+close_mosaic: 10
+# --- branch (A) domain-specific augmentation: the single changed knob-group ---
+mosaic: 0.5            # default 1.0; reduce so small lesions survive
+copy_paste: 0.3        # multiply rare stenosis instances
+scale: 0.3             # default 0.5; less aggressive scaling preserves small objects
+degrees: 5.0
+translate: 0.1
+hsv_v: 0.4             # brightness/gamma robustness
+erasing: 0.2
+project: runs/detect
+weights_path: weights/yolov8_improved.pt

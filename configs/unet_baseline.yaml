@@ -1,0 +1,15 @@
+# Phase 2 — baseline U-Net (Stage 1.1). AI-assisted config.
+name: unet_baseline
+seed: 1337
+encoder: resnet34
+encoder_weights: imagenet
+img_size: 512
+batch_size: 8
+lr: 0.001
+epochs: 120
+patience: 20
+num_workers: 4
+weighted_edge: false          # baseline: plain Dice+CE
+train_dir: data/syntax/train  # produced by coco_to_mask.py (images/ masks/)
+val_dir: data/syntax/val
+weights_path: weights/unet_baseline.pt
