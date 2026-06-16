@@ -20,19 +20,9 @@ import os
 import shutil
 from pathlib import Path
 
-os.environ["WANDB_MODE"] = "disabled"   # prevent WandB crashing on project names with '/'
+os.environ["WANDB_MODE"] = "disabled"
 
 from ultralytics import YOLO
-
-# Neutralise the WandB ultralytics callback so it never calls wandb.init()
-try:
-    import ultralytics.utils.callbacks.wb as _wb
-    _noop = lambda *a, **k: None
-    _wb.on_pretrain_routine_start = _noop
-    _wb.on_fit_epoch_end = _noop
-    _wb.on_train_end = _noop
-except Exception:
-    pass
 
 from src.utils.config import load_config
 from src.utils.manifest import record_run
@@ -58,11 +48,12 @@ def main():
 
     model = YOLO(cfg.get("model", "yolov8m.pt"))  # COCO-pretrained start
     train_kwargs = {k: cfg[k] for k in _PASSTHROUGH if k in cfg}
+    project = cfg.get("project", "yolo_runs").replace("/", "_")
     results = model.train(
         data=cfg.data_yaml,
         seed=seed,
         deterministic=True,
-        project=cfg.get("project", "runs/detect"),
+        project=project,
         name=cfg.get("name", "yolo"),
         exist_ok=True,
         **train_kwargs,
