@@ -23,7 +23,17 @@ from pathlib import Path
 
 import cv2
 import numpy as np
+import torch
 import yaml
+
+# PyTorch >= 2.6 defaults torch.load to weights_only=True, breaking ultralytics.
+# Patch before importing YOLO so the fix is in place when checkpoints are loaded.
+_orig_load = torch.load
+def _patched_load(f, *args, **kwargs):
+    kwargs.setdefault("weights_only", False)
+    return _orig_load(f, *args, **kwargs)
+torch.load = _patched_load
+
 from ultralytics import YOLO
 
 from src.eval.det_metrics import f1_from_pr, summarize_val_metrics, \
