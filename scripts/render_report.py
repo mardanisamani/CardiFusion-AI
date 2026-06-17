@@ -30,22 +30,53 @@ code { background: #f2f2f2; padding: 0 2px; }
 """
 
 
+def _weasyprint(html: str) -> bool:
+    """Try WeasyPrint (handles API differences across versions). Returns True on success."""
+    try:
+        from weasyprint import HTML
+        doc = HTML(string=html, base_url=str(REPORT_DIR))
+        # WeasyPrint >= 61 changed write_pdf signature; try target= kwarg first
+        try:
+            doc.write_pdf(target=str(PDF))
+        except TypeError:
+            data = doc.write_pdf()
+            PDF.write_bytes(data)
+        print(f"wrote {PDF}  (WeasyPrint)")
+        return True
+    except Exception as e:
+        print(f"WeasyPrint failed: {e}")
+        return False
+
+
+def _pandoc() -> bool:
+    """Fallback: run pandoc if available. Returns True on success."""
+    import shutil, subprocess
+    if not shutil.which("pandoc"):
+        print("pandoc not found — install it or fix WeasyPrint.")
+        return False
+    result = subprocess.run(
+        ["pandoc", str(MD), "-o", str(PDF),
+         "--pdf-engine=weasyprint", "--css=/dev/stdin"],
+        input=CSS, text=True, capture_output=True
+    )
+    if result.returncode == 0:
+        print(f"wrote {PDF}  (pandoc)")
+        return True
+    print(f"pandoc failed: {result.stderr}")
+    return False
+
+
 def main():
     if not MD.exists():
         raise SystemExit(f"missing {MD}")
-    try:
-        import markdown
-        from weasyprint import HTML
 
-        html_body = markdown.markdown(
-            MD.read_text(), extensions=["tables", "fenced_code"])
-        html = f"<html><head><style>{CSS}</style></head><body>{html_body}</body></html>"
-        HTML(string=html, base_url=str(REPORT_DIR)).write_pdf(str(PDF))
-        print(f"wrote {PDF}")
-    except Exception as e:  # pragma: no cover
-        print(f"WeasyPrint path failed ({e}).")
-        print("Fallback — render with pandoc:")
-        print(f"  pandoc {MD} -o {PDF} --pdf-engine=weasyprint")
+    import markdown
+    html_body = markdown.markdown(MD.read_text(), extensions=["tables", "fenced_code"])
+    html = f"<html><head><style>{CSS}</style></head><body>{html_body}</body></html>"
+
+    if not _weasyprint(html) and not _pandoc():
+        raise SystemExit("Could not render PDF. Install WeasyPrint system libs:\n"
+                         "  apt-get install -y libpango-1.0-0 libpangoft2-1.0-0 libcairo2")
 
 
 if __name__ == "__main__":
