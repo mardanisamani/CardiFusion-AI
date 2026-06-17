@@ -50,14 +50,18 @@ def _weasyprint(html: str) -> bool:
 
 def _pandoc() -> bool:
     """Fallback: run pandoc if available. Returns True on success."""
-    import shutil, subprocess
+    import shutil, subprocess, tempfile
     if not shutil.which("pandoc"):
         print("pandoc not found — install it or fix WeasyPrint.")
         return False
+    with tempfile.NamedTemporaryFile(suffix=".css", mode="w", delete=False) as f:
+        f.write(CSS)
+        css_path = f.name
     result = subprocess.run(
         ["pandoc", str(MD), "-o", str(PDF),
-         "--pdf-engine=weasyprint", "--css=/dev/stdin"],
-        input=CSS, text=True, capture_output=True
+         "--pdf-engine=weasyprint", f"--css={css_path}",
+         "--metadata", "title=ARCADE Report"],
+        capture_output=True, text=True
     )
     if result.returncode == 0:
         print(f"wrote {PDF}  (pandoc)")
