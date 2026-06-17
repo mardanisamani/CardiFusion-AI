@@ -22,6 +22,16 @@ from pathlib import Path
 
 os.environ["WANDB_MODE"] = "disabled"
 
+import torch
+# PyTorch >= 2.6 changed torch.load default to weights_only=True which blocks
+# ultralytics model classes. Allowlist them so YOLO can load its checkpoints.
+if hasattr(torch.serialization, "add_safe_globals"):
+    try:
+        from ultralytics.nn.tasks import DetectionModel, SegmentationModel
+        torch.serialization.add_safe_globals([DetectionModel, SegmentationModel])
+    except Exception:
+        pass
+
 from ultralytics import YOLO
 
 from src.utils.config import load_config
