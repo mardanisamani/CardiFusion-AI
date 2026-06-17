@@ -22,15 +22,6 @@ from pathlib import Path
 
 os.environ["WANDB_MODE"] = "disabled"
 
-import torch
-# PyTorch >= 2.6 changed torch.load default to weights_only=True which breaks
-# ultralytics checkpoints. Patch torch.load to restore the pre-2.6 behaviour.
-_orig_torch_load = torch.load
-def _patched_load(f, *args, **kwargs):
-    kwargs.setdefault("weights_only", False)
-    return _orig_torch_load(f, *args, **kwargs)
-torch.load = _patched_load
-
 from ultralytics import YOLO
 
 from src.utils.config import load_config
