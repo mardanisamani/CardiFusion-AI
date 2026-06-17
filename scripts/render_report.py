@@ -30,44 +30,36 @@ code { background: #f2f2f2; padding: 0 2px; }
 """
 
 
+def _xhtml2pdf(html: str) -> bool:
+    """Pure-Python HTML→PDF via xhtml2pdf. No system libs needed."""
+    try:
+        from xhtml2pdf import pisa
+        with PDF.open("wb") as fh:
+            status = pisa.CreatePDF(html, dest=fh, encoding="utf-8")
+        if not status.err:
+            print(f"wrote {PDF}  (xhtml2pdf)")
+            return True
+        print(f"xhtml2pdf error: {status.err}")
+        return False
+    except Exception as e:
+        print(f"xhtml2pdf failed: {e}")
+        return False
+
+
 def _weasyprint(html: str) -> bool:
-    """Try WeasyPrint (handles API differences across versions). Returns True on success."""
+    """Try WeasyPrint Python API."""
     try:
         from weasyprint import HTML
         doc = HTML(string=html, base_url=str(REPORT_DIR))
-        # WeasyPrint >= 61 changed write_pdf signature; try target= kwarg first
         try:
             doc.write_pdf(target=str(PDF))
         except TypeError:
-            data = doc.write_pdf()
-            PDF.write_bytes(data)
+            PDF.write_bytes(doc.write_pdf())
         print(f"wrote {PDF}  (WeasyPrint)")
         return True
     except Exception as e:
         print(f"WeasyPrint failed: {e}")
         return False
-
-
-def _pandoc() -> bool:
-    """Fallback: run pandoc if available. Returns True on success."""
-    import shutil, subprocess, tempfile
-    if not shutil.which("pandoc"):
-        print("pandoc not found — install it or fix WeasyPrint.")
-        return False
-    with tempfile.NamedTemporaryFile(suffix=".css", mode="w", delete=False) as f:
-        f.write(CSS)
-        css_path = f.name
-    result = subprocess.run(
-        ["pandoc", str(MD), "-o", str(PDF),
-         "--pdf-engine=weasyprint", f"--css={css_path}",
-         "--metadata", "title=ARCADE Report"],
-        capture_output=True, text=True
-    )
-    if result.returncode == 0:
-        print(f"wrote {PDF}  (pandoc)")
-        return True
-    print(f"pandoc failed: {result.stderr}")
-    return False
 
 
 def main():
@@ -78,9 +70,8 @@ def main():
     html_body = markdown.markdown(MD.read_text(), extensions=["tables", "fenced_code"])
     html = f"<html><head><style>{CSS}</style></head><body>{html_body}</body></html>"
 
-    if not _weasyprint(html) and not _pandoc():
-        raise SystemExit("Could not render PDF. Install WeasyPrint system libs:\n"
-                         "  apt-get install -y libpango-1.0-0 libpangoft2-1.0-0 libcairo2")
+    if not _weasyprint(html) and not _xhtml2pdf(html):
+        raise SystemExit("Could not render PDF. Run: pip install xhtml2pdf")
 
 
 if __name__ == "__main__":
