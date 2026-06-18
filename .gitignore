@@ -5,6 +5,7 @@ data/syntax/
 data/stenosis/
 data/yolo/
 *.zip
+report
 
 # Model artifacts that are large / regenerated. The FOUR submission weights in
 # weights/ are tracked for the submission zip; everything else is ignored.
