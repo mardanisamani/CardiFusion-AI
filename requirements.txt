@@ -17,3 +17,5 @@ pandas==2.2.1
 # Report rendering (markdown -> PDF). Either works; README documents both.
 markdown==3.6
 weasyprint==61.2
+sahi==0.11.18  # tiled-inference experiment (eval-only)
+ensemble-boxes==1.0.9  # WBF fusion (ensemble experiment)

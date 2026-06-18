@@ -1,0 +1,15 @@
+# WBF ensemble member B — seed 1, imgsz 640 (seed diversity). AI-assisted config.
+name: yolov8_wbf_s1
+seed: 1
+model: yolov8m.pt
+data_yaml: data/yolo/data.yaml
+epochs: 100
+imgsz: 640
+batch: 16
+optimizer: SGD
+lr0: 0.01
+lrf: 0.01
+patience: 30
+close_mosaic: 10
+project: runs/wbf
+weights_path: weights/wbf/yolov8_s1.pt

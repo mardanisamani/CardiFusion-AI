@@ -1,0 +1,16 @@
+# WBF ensemble member A — seed 0, imgsz 640. AI-assisted config.
+# Experimental (not one of the 4 submission weights); stored under weights/wbf/.
+name: yolov8_wbf_s0
+seed: 0
+model: yolov8m.pt
+data_yaml: data/yolo/data.yaml
+epochs: 100
+imgsz: 640
+batch: 16
+optimizer: SGD
+lr0: 0.01
+lrf: 0.01
+patience: 30
+close_mosaic: 10
+project: runs/wbf
+weights_path: weights/wbf/yolov8_s0.pt

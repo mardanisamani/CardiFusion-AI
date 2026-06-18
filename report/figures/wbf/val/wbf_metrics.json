@@ -1,0 +1,23 @@
+{
+  "members": [
+    "weights/yolov8_baseline.pt",
+    "weights/yolov8_baseline.pt",
+    "weights/yolov8_baseline.pt"
+  ],
+  "imgsz": [
+    640,
+    768,
+    1024
+  ],
+  "iou_thr": 0.55,
+  "skip_box_thr": 0.001,
+  "eval_conf": 0.25,
+  "precision": 0.7241,
+  "recall": 0.0517,
+  "f1": 0.0966,
+  "tp": 21,
+  "fp": 8,
+  "fn": 385,
+  "map50": 0.3088,
+  "map50_95": 0.1174
+}
